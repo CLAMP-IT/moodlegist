@@ -1,6 +1,6 @@
 <?php
 
-namespace Outlandish\Wpackagist\Service;
+namespace CLAMP\Moodlegist\Service;
 
 use Silex\Provider\DoctrineServiceProvider as BaseDoctrineServiceProvider;
 use Silex\Application;

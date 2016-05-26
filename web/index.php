@@ -32,12 +32,7 @@ $app['twig'] = $app->share($app->extend('twig', function ($twig, $app) {
         return $versions;
     });
 
-    $formatCategory = new Twig_SimpleFilter('format_category', function ($category) {
-        return str_replace('Outlandish\Wpackagist\Package\\', '', $category);
-    });
-
     $twig->addFilter($formatVersions);
-    $twig->addFilter($formatCategory);
 
     return $twig;
 }));
@@ -95,21 +90,6 @@ $app->get('/search', function (Request $request) use ($app, $searchForm) {
     $queryBuilder
         ->select('*')
         ->from('packages', 'p');
-
-    switch ($type) {
-        case 'theme':
-            $queryBuilder
-                ->andWhere('class_name = :class')
-                ->setParameter(':class', 'Outlandish\Wpackagist\Package\Theme');
-            break;
-        case 'plugin':
-            $queryBuilder
-                ->andWhere('class_name = :class')
-                ->setParameter(':class', 'Outlandish\Wpackagist\Package\Plugin');
-            break;
-        default:
-            break;
-    }
 
     if (!empty($query)) {
         $queryBuilder

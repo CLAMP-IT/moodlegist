@@ -1,6 +1,6 @@
 <?php
 
-namespace Outlandish\Wpackagist\Command;
+namespace CLAMP\Moodlegist\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\Helper;
-use Outlandish\Wpackagist\Package\AbstractPackage;
+use CLAMP\Moodlegist\Plugin\Plugin;
 
 class BuildCommand extends Command
 {
@@ -48,7 +48,7 @@ class BuildCommand extends Command
             SELECT * FROM packages
             WHERE versions IS NOT NULL
             ORDER BY name
-        ')->fetchAll(\PDO::FETCH_CLASS, 'Outlandish\Wpackagist\Package\AbstractPackage');
+        ')->fetchAll(\PDO::FETCH_CLASS, 'CLAMP\Moodlegist\Plugin\Plugin');
 
         $uid = 1; // don't know what this does but composer requires it
 

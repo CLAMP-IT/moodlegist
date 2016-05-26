@@ -1,10 +1,8 @@
 <?php
 
-namespace Outlandish\Wpackagist\Package;
+namespace CLAMP\Moodlegist\Plugin;
 
-use Composer\Package\Version\VersionParser;
-
-class AbstractPackage
+class Plugin
 {
     /**
      *

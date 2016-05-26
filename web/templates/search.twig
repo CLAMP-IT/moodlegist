@@ -23,8 +23,8 @@
         <tbody>
             {% for package in currentPageResults %}
                 <tr>
-                    <td data-type="{{ package['class_name'] | format_category | lower }}">
-                        {{ package['class_name'] | format_category }}
+                    <td data-type="{{ package['type'] }}">
+                        {{ package['type'] }}
                     </td>
                     <td data-name="{{ package['name'] | e }}">
                         <a href="https://moodle.org/plugins/{{package['frankenstyle_name'] }}/" target="_blank">{{ package['name'] | e }}</a>

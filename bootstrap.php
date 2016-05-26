@@ -8,4 +8,4 @@ if (file_exists(__DIR__.'/vendor/autoload.php')) {
         'php composer.phar install'.PHP_EOL);
 }
 
-return new Outlandish\Wpackagist\Application();
+return new CLAMP\Moodlegist\Application();

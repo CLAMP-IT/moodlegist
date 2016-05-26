@@ -1,6 +1,6 @@
 <?php
 
-namespace Outlandish\Wpackagist\Command;
+namespace CLAMP\Moodlegist\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,12 +18,6 @@ class RefreshCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $types = array(
-            'mod' => 'Outlandish\Wpackagist\Package\ActivityModule',
-            'antivirus' => 'Outlandish\Wpackagist\Package\AntivirusPlugins',
-            'assignsubmission' => 'Outlandish\Wpackagist\Package\AssignmentSubmissionPlugins',
-            'enrol' => 'Outlandish\Wpackagist\Package\EnrolmentPlugins',
-        );
 
         /**
          * @var \PDO $db

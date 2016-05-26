@@ -1,9 +1,9 @@
 <?php
 
-namespace Outlandish\Wpackagist\Service;
+namespace CLAMP\Moodlegist\Service;
 
 use Knp\Provider\ConsoleServiceProvider as BaseConsoleServiceProvider;
-use Outlandish\Wpackagist\Command;
+use CLAMP\Moodlegist\Command;
 use Silex\Application;
 
 class ConsoleServiceProvider extends BaseConsoleServiceProvider
@@ -14,7 +14,6 @@ class ConsoleServiceProvider extends BaseConsoleServiceProvider
 
         $app['console'] = $app->share($app->extend('console', function ($console, $app) {
             $console->add(new Command\RefreshCommand());
-            $console->add(new Command\UpdateCommand());
             $console->add(new Command\BuildCommand());
 
             return $console;

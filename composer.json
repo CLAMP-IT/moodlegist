@@ -1,6 +1,6 @@
 {
-    "name": "outlandish/wpackagist",
-    "description": "Install and manage WordPress plugins with Composer",
+    "name": "clamp/moodlegist",
+    "description": "Install and manage Moodle plugins with Composer",
     "require": {
         "php": ">=5.3.2",
         "composer/composer": "1.0.*@dev",
@@ -22,7 +22,7 @@
     "bin-dir": "bin",
     "autoload": {
         "psr-4": {
-            "Outlandish\\Wpackagist\\": "src/"
+            "CLAMP\\Moodlegist\\": "src/"
         }
     }
 }

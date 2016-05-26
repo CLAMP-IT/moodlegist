@@ -1,6 +1,6 @@
 <?php
 
-namespace Outlandish\Wpackagist;
+namespace CLAMP\Moodlegist;
 
 use Silex\Application as SilexApplication;
 
