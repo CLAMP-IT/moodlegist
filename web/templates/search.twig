@@ -44,9 +44,9 @@
                             {% endif %}
                             {# Hide extra versions, keep showing only the last 3 and the dev-trunk #}
                             {% if loop.index >= 2  and loop.index <= loop.length - 3 %}
-                                <a href="#" data-version="{{ version }}" data-hide="true" class="hide label round primary-color version js-version">{{ version }}</a>
+                                <a href="#" data-version="{{ version['version'] }}" data-hide="true" class="hide label round primary-color version js-version">{{ version['version'] }}</a>
                             {% else %}
-                                <a href="#" data-version="{{ version }}" class="label round primary-color version js-version">{{ version }}</a>
+                                <a href="#" data-version="{{ version['version'] }}" class="label round primary-color version js-version">{{ version['version'] }}</a>
                             {% endif %}
                         {% else %}
                             No version available.

@@ -26,8 +26,7 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
 $app['twig'] = $app->share($app->extend('twig', function ($twig, $app) {
     // Custom filter to handle version parsing from the DB.
     $formatVersions = new Twig_SimpleFilter('format_versions', function ($versions) {
-        $versions = array_keys((array) json_decode($versions, true));
-        usort($versions, 'version_compare');
+        $versions = json_decode($versions, true);
 
         return $versions;
     });
