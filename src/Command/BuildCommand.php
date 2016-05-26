@@ -8,7 +8,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\Helper;
-use CLAMP\Moodlegist\Plugin\Plugin;
+use CLAMP\Moodlegist\Package\Plugin;
+use CLAMP\Moodlegist\Package\Core;
 
 class BuildCommand extends Command
 {
@@ -25,7 +26,7 @@ class BuildCommand extends Command
      *
      * @return string
      */
-    protected function getComposerProviderGroup(AbstractPackage $package)
+    protected function getComposerProviderGroup($package)
     {
         return $package->getComposerType();
     }
@@ -37,6 +38,7 @@ class BuildCommand extends Command
         $fs = new Filesystem();
 
         $basePath = 'web/p.new/';
+        $fs->mkdir($basePath.'moodle');
         $fs->mkdir($basePath.'moodle-plugin-db');
 
         /**
@@ -48,9 +50,14 @@ class BuildCommand extends Command
             SELECT * FROM packages
             WHERE versions IS NOT NULL
             ORDER BY name
-        ')->fetchAll(\PDO::FETCH_CLASS, 'CLAMP\Moodlegist\Plugin\Plugin');
+        ')->fetchAll(\PDO::FETCH_CLASS, 'CLAMP\Moodlegist\Package\Plugin');
 
         $uid = 1; // don't know what this does but composer requires it
+
+        $corepackage = array(
+            'versions' => array('2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9', '3.0', '3.1')
+        );
+        $packages[] = new \CLAMP\Moodlegist\Package\Core($corepackage);
 
         $providers = array();
 

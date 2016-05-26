@@ -1,13 +1,7 @@
-WordPress Packagist
-===
+Moodle Packagist
+================
 
-This is the repository for [wpackagist.org](https://wpackagist.org) which allows WordPress plugins and themes to be
-managed along with other dependencies using [Composer](https://getcomposer.org).
-
-More info and usage instructions at [wpackagist.org](https://wpackagist.org) or follow us on
-Twitter [@wpackagist](https://twitter.com/wpackagist).
-
-For support and discussion, please use the issue tracker above.
+This is an experimental repository which allows Moodle plugins to be managed using [Composer](https://getcomposer.org). It is forked from the [wpackagist.org](https://wpackagist.org) project and builds on the work done by [Michael Aherne](https://github.com/micaherne/moodle-plugin-repo).
 
 ## Usage
 
@@ -37,13 +31,11 @@ Example composer.json:
 }
 ```
 
-## WordPress core
+## Moodle core
 
-This does not provide WordPress itself.
+This does not provide Moodle itself.
 
-See https://github.com/fancyguy/webroot-installer or https://github.com/johnpbloch/wordpress.
-
-## Running Wpackagist
+## Running Moodle Packagist
 
 ### Installing
 
@@ -54,8 +46,5 @@ See https://github.com/fancyguy/webroot-installer or https://github.com/johnpblo
 
 ### Updating the database
 
-The first database fetch may easily take 30-60 minutes, be patient.
-
-1. `bin/cmd refresh`: Refresh the list of plugins and themes to find new and updated packages.
-2. `bin/cmd update`: Update the versions for packages identified in `1.`.
-3. `bin/cmd build`: Rebuild all `.json` files in `web/`.
+1. `bin/cmd refresh`: Refresh the list of plugins from the Moodle plugins repository.
+2. `bin/cmd build`: Rebuild all `.json` files in `web/`.

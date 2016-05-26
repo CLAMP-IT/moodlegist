@@ -24,8 +24,10 @@ class RefreshCommand extends Command
          */
         $db = $this->getApplication()->getSilexApplication()['db'];
 
-        $updateStmt = $db->prepare('UPDATE packages SET newest_version = :newest_version, versions = :versions WHERE type = :type AND name = :name AND frankenstyle_name = :frankenstyle_name');
-        $insertStmt = $db->prepare('INSERT INTO packages (type, name, frankenstyle_name, newest_version, versions) VALUES (:type, :name, :frankenstyle_name, :newest_version, :versions)');
+        $updateStmt = $db->prepare('UPDATE packages SET newest_version = :newest_version, versions = :versions
+            WHERE type = :type AND name = :name');
+        $insertStmt = $db->prepare('INSERT INTO packages (type, name, newest_version, versions)
+            VALUES (:type, :name, :newest_version, :versions)');
 
         $url = 'https://download.moodle.org/api/1.3/pluglist.php';
         $json = file_get_contents($url);
@@ -46,7 +48,8 @@ class RefreshCommand extends Command
                 continue;
             }*/
             $newest_version = end($plugin->versions)->version;
-            $params = array(':type' => $type, ':name' => (string) $name, ':frankenstyle_name' => (string) $plugin->component, ':newest_version' => (int) $newest_version, ':versions' => json_encode($plugin->versions));
+            $params = array(':type' => $type, ':name' => (string) $name, ':newest_version' => (int) $newest_version,
+                ':versions' => json_encode($plugin->versions));
 
             $updateStmt->execute($params);
             if ($updateStmt->rowCount() == 0) {

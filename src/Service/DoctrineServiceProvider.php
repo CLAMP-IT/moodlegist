@@ -67,11 +67,10 @@ class DoctrineServiceProvider extends BaseDoctrineServiceProvider
             CREATE TABLE IF NOT EXISTS packages (
                 type TEXT,
                 name TEXT,
-                frankenstyle_name TEXT,
                 newest_version INT,
                 versions TEXT,
 
-                PRIMARY KEY (type, name, frankenstyle_name)
+                PRIMARY KEY (type, name)
             );
 
             CREATE TABLE IF NOT EXISTS schema_version (
