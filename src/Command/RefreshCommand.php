@@ -27,14 +27,8 @@ class RefreshCommand extends Command
         $updateStmt = $db->prepare('UPDATE packages SET newest_version = :newest_version, versions = :versions WHERE type = :type AND name = :name AND frankenstyle_name = :frankenstyle_name');
         $insertStmt = $db->prepare('INSERT INTO packages (type, name, frankenstyle_name, newest_version, versions) VALUES (:type, :name, :frankenstyle_name, :newest_version, :versions)');
 
-        /*$url = 'https://download.moodle.org/api/1.3/pluglist.php';
-        exec("curl $url 2>&1", $json, $returnCode);
-
-        if ($returnCode) {
-            $output->writeln('<error>Error retrieving plugin list</error>');
-            return 1;
-        }*/
-        $json = file_get_contents('/Users/fultonc/git/moodle/moodlegist/data/plugins.json');
+        $url = 'https://download.moodle.org/api/1.3/pluglist.php';
+        $json = file_get_contents($url);
 
         $plugin_list = json_decode($json);
         $output->writeln("Updating database");
