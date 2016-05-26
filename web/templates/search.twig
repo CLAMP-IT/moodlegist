@@ -15,9 +15,7 @@
             <tr>
                 <th width="8%">Type</th>
                 <th width="20%">Name</th>
-                <th width="18%"><abbr title="Last time a modification was committed to the SVN repository">Last committed</abbr></th>
-                <th width="18%"><abbr title="Last time this package was updated in the WordPress Packagist database">Last fetched</abbr></th>
-                <th width="32%">Versions</th>
+                <th width="72%">Versions</th>
             </tr>
         </thead>
         <tbody>
@@ -27,16 +25,10 @@
                         {{ package['type'] }}
                     </td>
                     <td data-name="{{ package['name'] | e }}">
-                        <a href="https://moodle.org/plugins/{{package['frankenstyle_name'] }}/" target="_blank">{{ package['name'] | e }}</a>
+                        <a href="https://moodle.org/plugins/{{ package['type'] }}_{{ package['name'] }}/" target="_blank">{{ package['name'] | e }}</a>
                     </td>
                     <td>
-                        {{ package['last_committed'] | default('Not Committed') }}
-                    </td>
-                    <td>
-                        {{ package['last_fetched'] | default('Not fetched') }}
-                    </td>
-                    <td>
-                        {% set versions = package['versions'] | format_versions %}
+                        {% set versions = package['versions'] | format_versions( moodle_version ) %}
                         {% for version in versions %}
                             {# Separator allowing to toggle the show more version #}
                             {% if (loop.index == 2 and loop.length > 4) %}
@@ -44,9 +36,9 @@
                             {% endif %}
                             {# Hide extra versions, keep showing only the last 3 and the dev-trunk #}
                             {% if loop.index >= 2  and loop.index <= loop.length - 3 %}
-                                <a href="#" data-version="{{ version['version'] }}" data-hide="true" class="hide label round primary-color version js-version">{{ version['version'] }}</a>
+                                <a href="#" data-version="{{ version['version'] }}" data-hide="true" class="hide label round primary-color version js-version">{{ version['release'] }}</a>
                             {% else %}
-                                <a href="#" data-version="{{ version['version'] }}" class="label round primary-color version js-version">{{ version['version'] }}</a>
+                                <a href="#" data-version="{{ version['version'] }}" class="label round primary-color version js-version">{{ version['release'] }}</a>
                             {% endif %}
                         {% else %}
                             No version available.

@@ -24,11 +24,32 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
 
 // Configure Twig provider
 $app['twig'] = $app->share($app->extend('twig', function ($twig, $app) {
-    // Custom filter to handle version parsing from the DB.
-    $formatVersions = new Twig_SimpleFilter('format_versions', function ($versions) {
-        $versions = json_decode($versions, true);
 
-        return $versions;
+    // Custom filter to handle version parsing from the DB.
+    $formatVersions = new Twig_SimpleFilter('format_versions', function ($versions, $search) {
+        $versions = json_decode($versions, true);
+        $supportedversions = array();
+        if ($search != 'any') {
+            foreach ($versions as $key => $version) {
+                $supportedmoodles = array();
+                foreach ($version['supportedmoodles'] as $supportedmoodle) {
+                    $supportedmoodles[] = $supportedmoodle['release'];
+                }
+                if (in_array($search, $supportedmoodles)) {
+                    $supportedversions[$key] = $version;
+                }
+            }
+        } else {
+            $supportedversions = $versions;
+        }
+
+        $versionnumbers = array();
+        foreach ($supportedversions as $key => $row) {
+            $versionnumbers[$key] = $row['version'];
+        }
+
+        array_multisort($versionnumbers, SORT_ASC, $supportedversions);
+        return $supportedversions;
     });
 
     $twig->addFilter($formatVersions);
@@ -50,11 +71,14 @@ $searchForm = $app['form.factory']->createNamedBuilder('', 'form', null, array('
     ->setAction('search')
     ->setMethod('GET')
     ->add('q', 'search')
-    ->add('type', 'choice', array(
+    ->add('moodle_version', 'choice', array(
         'choices' => array(
-            'any'     => 'All packages',
-            'plugin'  => 'Plugins',
-            'theme'   => 'Themes',
+            'any' => 'Any version of Moodle',
+            '3.1' => 'Moodle 3.1',
+            '3.0' => 'Moodle 3.0',
+            '2.9' => 'Moodle 2.9',
+            '2.8' => 'Moodle 2.8',
+            '2.7' => 'Moodle 2.7',
         ),
     ))
     ->add('search', 'submit')
@@ -67,7 +91,7 @@ $searchForm = $app['form.factory']->createNamedBuilder('', 'form', null, array('
 // Home
 $app->get('/', function (Request $request) use ($app, $searchForm) {
     return $app['twig']->render('index.twig', array(
-       'title'      => "WordPress Packagist: Manage your plugins and themes with Composer",
+       'title'      => "Moodle Packagist: Manage your plugins with Composer",
        'searchForm' => $searchForm->handleRequest($request)->createView(),
     ));
 });
@@ -80,7 +104,7 @@ $app->get('/search', function (Request $request) use ($app, $searchForm) {
     $query        = trim($request->get('q'));
 
     $data = array(
-        'title'              => "WordPress Packagist: Search packages",
+        'title'              => "Moodle Packagist: Search packages",
         'searchForm'         => $searchForm->handleRequest($request)->createView(),
         'currentPageResults' => '',
         'error'              => '',
@@ -110,13 +134,15 @@ $app->get('/search', function (Request $request) use ($app, $searchForm) {
 
     $data['pager']              = $pagerfanta;
     $data['currentPageResults'] = $pagerfanta->getCurrentPageResults();
+    $data['moodle_version']     = $request->get('moodle_version');
 
     return $app['twig']->render('search.twig', $data);
 });
 
 // Opensearch path
 $app->get('/opensearch.xml', function (Request $request) use ($app) {
-    return new Response($app['twig']->render(
+    return new Response(
+        $app['twig']->render(
             'opensearch.twig',
             array('host' => $request->getHttpHost())
         ),

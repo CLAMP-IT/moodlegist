@@ -5,9 +5,8 @@
 {% endblock %}
 
 {% block content %}
-    <p class="mission">This site mirrors the WordPress <a href=
-        "https://plugins.svn.wordpress.org/">plugin</a> and <a href=
-        "https://themes.svn.wordpress.org/">theme</a> directories as a <a href=
+    <p class="mission">This site mirrors the Moodle <a href=
+        "https://moodle.org/plugins">Plugins</a> database as a <a href=
         "https://getcomposer.org/">Composer</a> repository.
     </p>
 
@@ -20,46 +19,38 @@
             <ol>
                 <li>Add the repository to your <code>composer.json</code></li>
 
-                <li>Add the desired plugins and themes to your requirements using
-                <code>wpackagist-plugin</code> or <code>wpackagist-theme</code> as
+                <li>Add the desired plugins to your requirements using
+                <code>moodle-plugin-db</code> as
                 the vendor name.</li>
 
                 <li>Run <code>$ composer.phar update</code></li>
 
                 <li>Packages are <a href="https://github.com/composer/installers">
-                    installed</a> to <code>wp-content/plugins/</code> or
-                    <code>wp-content/themes/</code>
+                    installed</a> to the appropriate path in the Moodle root.
                 </li>
             </ol>
 
             <h3>Example</h3>
 <pre>{
-    "name": "acme/brilliant-wordpress-site",
-    "description": "My brilliant WordPress site",
-<div class="highlighter">    "repositories":[
+    "name": "myschool/my-moodle-site",
+    "description": "My Moodle site",
+<div class="highlighter">"repositories":[
         {
             "type":"composer",
-            "url":"https://wpackagist.org"
+            "url":"https://my-moodlegist-site"
         }
     ],
 </div>    "require": {
         "aws/aws-sdk-php":"*",
-<div class="highlighter">        "wpackagist-plugin/akismet":"dev-trunk",
-        "wpackagist-plugin/captcha":">=3.9",
-        "wpackagist-theme/hueman":"*"
-</div>    },
-    "autoload": {
-        "psr-0": {
-            "Acme": "src/"
-        }
-    }
+<div class="highlighter">   "moodle/moodle":"3.0.0",
+        "moodle-plugin-db/mod_attendance":"*",
+        "moodle-plugin-db/theme_essential":"*",
+</div>    }
 }</pre>
 
-            <p>This example <code>composer.json</code> file adds the Wpackagist
-            repository and includes the latest version of Akismet, at least version
-            3.9 of Captcha, and the latest Hueman theme along with the Amazon Web
-            Services SDK from the main <a href=
-            "https://packagist.org/">Packagist</a> repository.</p>
+            <p>This example <code>composer.json</code> file adds the Moodle Packagist
+            repository and includes the latest versions of the Attendance module
+            and Essential theme for Moodle 3.0.
 
             <p>Find out more about <a href=
             "https://getcomposer.org/doc/01-basic-usage.md">using Composer</a>
@@ -67,9 +58,6 @@
             "https://github.com/composer/installers#custom-install-paths">custom
             install paths</a>.</p>
 
-            <p>The old vendor prefix <code>wpackagist</code> is now
-            <strong>removed</strong> in favour of
-            <code>wpackagist-plugin</code>.</p>
         </div>
 
         <div class="large-6 columns">
@@ -87,12 +75,9 @@
             </blockquote>
 
             <ul>
-                <li>Avoid committing plugins and themes into source control.</li>
+                <li>Avoid committing plugins into source control.</li>
 
                 <li>Avoid having to use git submodules.</li>
-
-                <li>Manage WordPress and non-WordPress project libraries with the
-                same tools.</li>
 
                 <li>Could eventually be used to manage dependencies between
                 plugins.</li>
@@ -101,15 +86,8 @@
             <h3>How does the repository work?</h3>
 
             <ul>
-                <li>Scans the WordPress Subversion repository every hour for <a href=
-                "https://plugins.svn.wordpress.org/">plugins</a> and <a href=
-                "https://themes.svn.wordpress.org/">themes</a>.
+                <li>Downloads plugin information from the Moodle plugins database.
                 </li>
-
-                <li>Fetches the <code>tags</code> for each updated package and maps
-                those to versions.</li>
-
-                <li>For plugins, adds <code>trunk</code> as a dev version.</li>
 
                 <li>Rebuilds the composer package JSON files.</li>
             </ul>
@@ -133,16 +111,12 @@
                 <li>You can also check for <a href="https://github.com/outlandishideas/wpackagist/issues">open issues</a>.</li>
             </ul>
 
-            <h3>WordPress Core</h3>
+            <h3>Moodle Core</h3>
 
-            <p>See
-                <code><a href="https://github.com/fancyguy/webroot-installer">fancyguy/webroot-installer</a></code> or
-                <code><a href="https://github.com/johnpbloch/wordpress">johnpbloch/wordpress</a></code> for installing
-                WordPress itself using Composer.</p>
+            <p>Not supported.</p>
 
             <h3>Contribute or get support</h3>
 
-            <p>Please visit our <a href="https://github.com/outlandishideas/wpackagist">GitHub page</a>.</p>
         </div>
     </div>
 {% endblock %}

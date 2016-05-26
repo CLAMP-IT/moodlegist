@@ -9,31 +9,25 @@ Example composer.json:
 
 ```json
 {
-    "name": "acme/brilliant-wordpress-site",
-    "description": "My brilliant WordPress site",
+    "name": "myschool/my-moodle-site",
+    "description": "My Moodle site",
     "repositories":[
         {
             "type":"composer",
-            "url":"https://wpackagist.org"
+            "url":"https://my-moodlegist-site"
         }
     ],
     "require": {
-        "aws/aws-sdk-php":"*",
-        "wpackagist-plugin/akismet":"dev-trunk",
-        "wpackagist-plugin/captcha":">=3.9",
-        "wpackagist-theme/hueman":"*"
-    },
-    "autoload": {
-        "psr-0": {
-            "Acme": "src/"
-        }
+        "moodle/moodle":"3.0.0",
+        "moodle-plugin-db/mod_attendance":"*",
+        "moodle-plugin-db/theme_essential":"*",
     }
 }
 ```
 
 ## Moodle core
 
-This does not provide Moodle itself.
+This does not provide Moodle itself. You may specify a version of moodle to lock packages at that supported release level.
 
 ## Running Moodle Packagist
 

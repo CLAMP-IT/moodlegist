@@ -1,19 +1,16 @@
 {{ form_start(searchForm, {'attr': {'class': 'row collapse'}}) }}
-    <div class="medium-8 columns">
+    <div class="medium-7 columns">
         <div class="row collapse">
             <div class="small-12 columns">
                 {{ form_widget(searchForm.q, {'required': false, 'attr': {'autofocus': 'true'}}) }}
             </div>
         </div>
     </div>
-    <div class="medium-4 columns">
+    <div class="medium-5 columns">
         <div class="row collapse">
             <div class="small-6 columns">
-                {{ form_widget(searchForm.type) }}
+                {{ form_widget(searchForm.moodle_version) }}
             </div>
-            {#<div class="small-3 columns">
-                {{ form_widget(searchForm.active_only) }}
-            </div>#}
             <div class="small-6 columns">
                 {{ form_widget(searchForm.search, { 'label': 'Search »','attr': {'class': 'primary-color postfix'}}) }}
             </div>
