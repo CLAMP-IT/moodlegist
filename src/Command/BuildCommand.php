@@ -27,26 +27,7 @@ class BuildCommand extends Command
      */
     protected function getComposerProviderGroup(AbstractPackage $package)
     {
-        $date = $package->getLastCommited();
-
-        if ($date >= new \DateTime('monday last week')) {
-            return 'this-week';
-        } elseif ($date >= new \DateTime(date('Y').'-01-01')) {
-            // split current by chunks of 3 months, current month included
-            // past chunks will never be update this year
-            $month = $date->format('n');
-            $month = ceil($month / 3) * 3;
-            $month = str_pad($month, 2, '0', STR_PAD_LEFT);
-
-            return $date->format('Y-').$month;
-        } elseif ($date >= new \DateTime('2011-01-01')) {
-            // split by years, limit at 2011 so we never update 'old' again
-            return $date->format('Y');
-        } else {
-            // 2010 and older is about 2M, which is manageable
-            // Still some packages ? Probably junk/errors
-            return 'old';
-        }
+        return $package->getComposerType();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -56,9 +37,7 @@ class BuildCommand extends Command
         $fs = new Filesystem();
 
         $basePath = 'web/p.new/';
-        $fs->mkdir($basePath.'wpackagist');
-        $fs->mkdir($basePath.'wpackagist-plugin');
-        $fs->mkdir($basePath.'wpackagist-theme');
+        $fs->mkdir($basePath.'moodle-plugin-db');
 
         /**
          * @var \PDO $db
@@ -67,9 +46,9 @@ class BuildCommand extends Command
 
         $packages = $db->query('
             SELECT * FROM packages
-            WHERE versions IS NOT NULL AND is_active
+            WHERE versions IS NOT NULL
             ORDER BY name
-        ')->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+        ')->fetchAll(\PDO::FETCH_CLASS, 'Outlandish\Wpackagist\Package\AbstractPackage');
 
         $uid = 1; // don't know what this does but composer requires it
 

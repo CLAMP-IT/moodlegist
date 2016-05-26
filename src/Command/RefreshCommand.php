@@ -13,23 +13,16 @@ class RefreshCommand extends Command
     {
         $this
             ->setName('refresh')
-            ->setDescription('Refresh list of plugins from WP SVN')
-            ->addOption(
-                'svn',
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Path to svn executable',
-                'svn'
-            );
+            ->setDescription('Refresh list of plugins from Moodle plugins database');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $svn = $input->getOption('svn');
-
         $types = array(
-            'plugin' => 'Outlandish\Wpackagist\Package\Plugin',
-            'theme'  => 'Outlandish\Wpackagist\Package\Theme',
+            'mod' => 'Outlandish\Wpackagist\Package\ActivityModule',
+            'antivirus' => 'Outlandish\Wpackagist\Package\AntivirusPlugins',
+            'assignsubmission' => 'Outlandish\Wpackagist\Package\AssignmentSubmissionPlugins',
+            'enrol' => 'Outlandish\Wpackagist\Package\EnrolmentPlugins',
         );
 
         /**
@@ -37,41 +30,46 @@ class RefreshCommand extends Command
          */
         $db = $this->getApplication()->getSilexApplication()['db'];
 
-        $updateStmt = $db->prepare('UPDATE packages SET last_committed = :date WHERE class_name = :class_name AND name = :name');
-        $insertStmt = $db->prepare('INSERT INTO packages (class_name, name, last_committed) VALUES (:class_name, :name, :date)');
+        $updateStmt = $db->prepare('UPDATE packages SET newest_version = :newest_version, versions = :versions WHERE type = :type AND name = :name AND frankenstyle_name = :frankenstyle_name');
+        $insertStmt = $db->prepare('INSERT INTO packages (type, name, frankenstyle_name, newest_version, versions) VALUES (:type, :name, :frankenstyle_name, :newest_version, :versions)');
 
-        foreach ($types as $type => $class_name) {
-            $url = call_user_func(array($class_name, 'getSvnBaseUrl'));
-            $output->writeln("Fetching full plugin list from $url");
+        /*$url = 'https://download.moodle.org/api/1.3/pluglist.php';
+        exec("curl $url 2>&1", $json, $returnCode);
 
-            $xmlLines = array();
-            exec("$svn ls --xml $url 2>&1", $xmlLines, $returnCode);
-            if ($returnCode) {
-                $output->writeln('<error>Error from svn command</error>');
+        if ($returnCode) {
+            $output->writeln('<error>Error retrieving plugin list</error>');
+            return 1;
+        }*/
+        $json = file_get_contents('/Users/fultonc/git/moodle/moodlegist/data/plugins.json');
 
-                return 1; // error code
+        $plugin_list = json_decode($json);
+        $output->writeln("Updating database");
+
+        $db->beginTransaction();
+        $newCount = 0;
+        $updateCount =  0;
+        foreach ($plugin_list->plugins as $plugin) {
+            if (empty($plugin->component)) {
+                continue;
             }
-            $xml = simplexml_load_string(implode("\n", $xmlLines));
+            list($type, $name) = explode('_', $plugin->component, 2);
 
-            $output->writeln("Updating database");
+            /*if (!array_key_exists($type, $types)) {
+                continue;
+            }*/
+            $newest_version = end($plugin->versions)->version;
+            $params = array(':type' => $type, ':name' => (string) $name, ':frankenstyle_name' => (string) $plugin->component, ':newest_version' => (int) $newest_version, ':versions' => json_encode($plugin->versions));
 
-            $db->beginTransaction();
-            $newCount = 0;
-            foreach ($xml->list->entry as $entry) {
-                $date = date('Y-m-d H:i:s', strtotime((string) $entry->commit->date));
-                $params = array(':class_name' => $class_name, ':name' => (string) $entry->name, ':date' => $date);
-
-                $updateStmt->execute($params);
-                if ($updateStmt->rowCount() == 0) {
-                    $insertStmt->execute($params);
-                    $newCount++;
-                }
+            $updateStmt->execute($params);
+            if ($updateStmt->rowCount() == 0) {
+                $insertStmt->execute($params);
+                $newCount++;
+            } else {
+                $updateCount++;
             }
-            $db->commit();
-
-            $updateCount = $db->query($s = 'SELECT COUNT(*) FROM packages WHERE last_fetched < last_committed AND class_name = '.$db->quote($class_name))->fetchColumn();
-
-            $output->writeln("Found $newCount new and $updateCount updated {$type}s");
         }
+        $db->commit();
+
+        $output->writeln("Found $newCount new and $updateCount updated plugins");
     }
 }

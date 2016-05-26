@@ -4,12 +4,23 @@ namespace Outlandish\Wpackagist\Package;
 
 use Composer\Package\Version\VersionParser;
 
-abstract class AbstractPackage
+class AbstractPackage
 {
+    /**
+     *
+     * @var string
+     */
+    protected $type;
+
     /**
      * @var string
      */
     protected $name;
+
+    /**
+     * @var string
+     */
+    protected $frankenstyle_name;
 
     /**
      * @var \DateTime
@@ -25,6 +36,11 @@ abstract class AbstractPackage
      * @var array
      */
     protected $versions = array();
+
+    /**
+     * @var string
+     */
+    protected $plugin_db_url = 'https://download.moodle.org/api/1.3/pluglist.php';
 
     public function __construct(array $data = array())
     {
@@ -66,24 +82,23 @@ abstract class AbstractPackage
         return $this->name;
     }
 
+    public function getFrankenstyleName()
+    {
+        return $this->frankenstyle_name;
+    }
+
     /**
      * Ex: wpackagist
      * @return string
      */
-    abstract public function getVendorName();
-
-    /**
-     * Ex: https://plugins.svn.wordpress.org/
-     * @return string
-     */
-    public static function getSvnBaseUrl()
+    public function getVendorName()
     {
-        throw new \BadMethodCallException("Not implemented");
+        return 'moodle-plugin-db';
     }
 
-    public function getSvnUrl()
+    public function getPluginDbUrl()
     {
-        return static::getSvnBaseUrl().$this->getName().'/';
+        return $this->plugin_db_url;
     }
 
     /**
@@ -92,7 +107,7 @@ abstract class AbstractPackage
      */
     public function getComposerType()
     {
-        return;
+        return 'moodle-'. $this->type;
     }
 
     /**
@@ -100,20 +115,26 @@ abstract class AbstractPackage
      */
     public function getPackageName()
     {
-        return $this->getVendorName().'/'.$this->getName();
+        return $this->getVendorName().'/'.$this->getFrankenstyleName();
     }
 
     /**
      * Ex: https://wordpress.org/extend/themes/THEME/
      * @return string URL
      */
-    abstract public function getHomepageUrl();
+    public function getHomepageUrl()
+    {
+        return "https://moodle.org/plugins/".$this->getName();
+    }
 
     /**
      * Ex: https://downloads.wordpress.org/plugin/plugin.1.0.zip
      * @return string URL
      */
-    abstract public function getDownloadUrl($version);
+    public function getDownloadUrl($version)
+    {
+        return $this->versions[$version]->downloadurl;
+    }
 
     /**
      * @return \DateTime|null
@@ -143,12 +164,20 @@ abstract class AbstractPackage
     {
         $packages = array();
 
-        foreach ($this->versions as $version => $tag) {
-            try {
-                $packages[$this->getPackageName()][$version] = $this->getPackageVersion($version, $uid);
-            } catch (\UnexpectedValueException $e) {
-                //skip packages with weird version numbers
-            }
+        foreach ($this->versions as $version) {
+            $package = array();
+            $package['name'] = $this->getPackageName();
+            $package['version'] = $version['version'];
+            $package['uid'] = $uid++;
+            $package['dist'] = array(
+                'type' => 'zip',
+                'url' => $version['downloadurl']
+            );
+            $package['homepage'] = $this->getHomepageUrl();
+            $package['require']['composer/installers'] = '~1.0';
+            $package['type'] = $this->getComposerType();
+            $package['extra']['installer-name'] = $this->getName();
+            $packages[$this->getPackageName()][$package['version']] = $package;
         }
 
         return $packages;
@@ -162,34 +191,19 @@ abstract class AbstractPackage
      */
     public function getPackageVersion($version, &$uid = 1)
     {
-        $versionParser = new VersionParser();
-        $normalizedVersion = $versionParser->normalize($version);
-
         $tag = $this->versions[$version];
 
         $package = array(
             'name'               => $this->getPackageName(),
             'version'            => $version,
-            'version_normalized' => $normalizedVersion,
+    //        'version_normalized' => $normalizedVersion,
             'uid'                => $uid++,
         );
-
-        if ($version == 'dev-trunk') {
-            $package['time'] = $this->getLastCommited()->format('Y-m-d H:i:s');
-        }
 
         if ($url = $this->getDownloadUrl($version)) {
             $package['dist'] = array(
                 'type' => 'zip',
                 'url'  => $url,
-            );
-        }
-
-        if (($url = $this->getSvnUrl()) && $tag) {
-            $package['source'] = array(
-                'type'      => 'svn',
-                'url'       => $this->getSvnUrl(),
-                'reference' => $tag,
             );
         }
 

@@ -18,7 +18,6 @@
                 <th width="18%"><abbr title="Last time a modification was committed to the SVN repository">Last committed</abbr></th>
                 <th width="18%"><abbr title="Last time this package was updated in the WordPress Packagist database">Last fetched</abbr></th>
                 <th width="32%">Versions</th>
-                <th width="4%">Active</th>
             </tr>
         </thead>
         <tbody>
@@ -28,7 +27,7 @@
                         {{ package['class_name'] | format_category }}
                     </td>
                     <td data-name="{{ package['name'] | e }}">
-                        <a href="https://wordpress.org/{{package['class_name'] | format_category | lower}}s/{{ package['name'] | e }}/" target="_blank">{{ package['name'] | e }}</a>
+                        <a href="https://moodle.org/plugins/{{package['frankenstyle_name'] }}/" target="_blank">{{ package['name'] | e }}</a>
                     </td>
                     <td>
                         {{ package['last_committed'] | default('Not Committed') }}
@@ -52,13 +51,6 @@
                         {% else %}
                             No version available.
                         {% endfor %}
-                    </td>
-                    <td style="text-align: center">
-                        {% if package['is_active'] %}
-                            <span style="color: green">✔</span>
-                        {% else %}
-                            <span style="color: red">✘</span>
-                        {% endif %}
                     </td>
                 </tr>
             {% else %}

@@ -63,12 +63,6 @@ $searchForm = $app['form.factory']->createNamedBuilder('', 'form', null, array('
             'theme'   => 'Themes',
         ),
     ))
-//    ->add('active_only', 'choice', array(
-//        'choices' => array(
-//            0 => 'All',
-//            1 => 'Active',
-//        ),
-//    ))
     ->add('search', 'submit')
     ->getForm();
 
@@ -89,7 +83,6 @@ $app->get('/search', function (Request $request) use ($app, $searchForm) {
     /** @var \Doctrine\DBAL\Query\QueryBuilder $queryBuilder */
     $queryBuilder = $app['db']->createQueryBuilder();
     $type         = $request->get('type');
-    $active       = $request->get('active_only');
     $query        = trim($request->get('q'));
 
     $data = array(
@@ -115,16 +108,6 @@ $app->get('/search', function (Request $request) use ($app, $searchForm) {
                 ->setParameter(':class', 'Outlandish\Wpackagist\Package\Plugin');
             break;
         default:
-            break;
-    }
-
-    switch ($active) {
-        case 1:
-            $queryBuilder->andWhere('is_active');
-            break;
-
-        default:
-            $queryBuilder->orderBy('is_active', 'DESC');
             break;
     }
 

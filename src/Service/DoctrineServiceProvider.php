@@ -65,16 +65,14 @@ class DoctrineServiceProvider extends BaseDoctrineServiceProvider
     {
         $conn->exec('
             CREATE TABLE IF NOT EXISTS packages (
-                class_name TEXT,
+                type TEXT,
                 name TEXT,
-                last_committed DATETIME,
-                last_fetched DATETIME,
+                frankenstyle_name TEXT,
+                newest_version INT,
                 versions TEXT,
 
-                PRIMARY KEY (class_name, name)
+                PRIMARY KEY (type, name, frankenstyle_name)
             );
-            CREATE INDEX IF NOT EXISTS last_committed_idx ON packages(last_committed);
-            CREATE INDEX IF NOT EXISTS last_fetched_idx ON packages(last_fetched);
 
             CREATE TABLE IF NOT EXISTS schema_version (
                 version INT,
@@ -82,19 +80,5 @@ class DoctrineServiceProvider extends BaseDoctrineServiceProvider
                 PRIMARY KEY (version)
             );
         ');
-    }
-
-    protected function migrateTo2(Connection $conn)
-    {
-        $conn->exec('ALTER TABLE packages ADD COLUMN is_active INT DEFAULT 1');
-
-        // Versions format has changed, redownload everything
-        $conn->exec('UPDATE packages SET last_fetched = NULL');
-    }
-
-    protected function migrateTo3(Connection $conn)
-    {
-        // Versions detection has changed, redownload everyting
-        $conn->exec('UPDATE packages SET last_fetched = NULL');
     }
 }
