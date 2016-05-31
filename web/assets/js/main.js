@@ -16,11 +16,11 @@ $(document).ready(function () {
         //add info box in next row
         $parentRow.after("<tr class='js-composer-info'> \
                                 <td colspan='6'><div class='row'> \
-                                    <div class='small-5 columns'> \
+                                    <div class='col-xs-5'> \
                                         <label for='copy-field' class='right inline'>Press Control-C or Command-C to copy to your clipboard:</label> \
                                     </div> \
-                                    <div class='small-7 columns'> \
-                                        <input id='copy-field' class='js-copy' type='text' value=''> \
+                                    <div class='col-xs-7'> \
+                                        <input id='copy-field' class='js-copy form-control' type='text' value=''> \
                                     </div> \
                                   </div></td> \
                               </tr>");

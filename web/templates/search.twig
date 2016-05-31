@@ -5,20 +5,17 @@
 {% endblock %}
 
 {% block content %}
-    {% include 'searchbar.twig' %}
+{% include 'searchbar.twig' %}
 
-    {% if error %}
-        <div class="alert-box alert">{{ error }}</div>
-    {% endif %}
-    <table>
-        <thead>
-            <tr>
-                <th width="8%">Type</th>
-                <th width="20%">Name</th>
-                <th width="72%">Versions</th>
-            </tr>
-        </thead>
-        <tbody>
+{% if error %}
+    <div class="alert-box alert">{{ error }}</div>
+{% endif %}
+    <table class="table">
+        <tr>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Versions</th>
+        </tr>
             {% for package in currentPageResults %}
                 <tr>
                     <td data-type="{{ package['type'] }}">
@@ -27,18 +24,18 @@
                     <td data-name="{{ package['name'] | e }}">
                         <a href="https://moodle.org/plugins/{{ package['type'] }}_{{ package['name'] }}/" target="_blank">{{ package['name'] | e }}</a>
                     </td>
-                    <td>
+                    <td class="versions">
                         {% set versions = package['versions'] | format_versions( moodle_version ) %}
                         {% for version in versions %}
                             {# Separator allowing to toggle the show more version #}
                             {% if (loop.index == 2 and loop.length > 4) %}
-                                <a href="#" class="label round primary-color js-toggle-more" title="Show all versions">...</a>
+                                <a href="#" class="js-toggle-more" title="Show all versions">...</a>
                             {% endif %}
                             {# Hide extra versions, keep showing only the last 3 and the dev-trunk #}
                             {% if loop.index >= 2  and loop.index <= loop.length - 3 %}
-                                <a href="#" data-version="{{ version['version'] }}" data-hide="true" class="hide label round primary-color version js-version">{{ version['release'] }}</a>
+                                <a href="#" data-version="{{ version['version'] }}" data-hide="true" class="hide js-version">{{ version['release'] }}</a>
                             {% else %}
-                                <a href="#" data-version="{{ version['version'] }}" class="label round primary-color version js-version">{{ version['release'] }}</a>
+                                <a href="#" data-version="{{ version['version'] }}" class="js-version">{{ version['release'] }}</a>
                             {% endif %}
                         {% else %}
                             No version available.
@@ -50,19 +47,16 @@
                     <td colspan="6" class="no-results">No results.</td>
                 </tr>
             {% endfor %}
-
-        </tbody>
     </table>
-
     {{ pagerfanta(pager, 'default', {
         'container_template': '<ul class="pagination">%pages%</ul>',
         'page_template': '<li><a href="%href%">%text%</a></li>',
         'span_template':'<li class="%class%"><a href="#">%text%</a></li>'
     }) }}
 
-    <div class="alert-box info">
-        If a package has no version and/or is not active, please check it is visible on
-        <a href="https://wordpress.org/plugins/">wordpress.org</a> before reporting a
-        <a href="https://github.com/outlandishideas/wpackagist/issues/new">bug</a>.
-    </div>
+    <p>
+        If a plugin has no release for a given Moodle version, please ensure that it is updated on
+        the Moodle <a href="https://moodle.org/plugins/">Plugins</a> database before reporting a
+        <a href="https://github.com/CLAMP-IT/moodlegist/issues/new">bug</a>.
+    </p>
 {% endblock %}

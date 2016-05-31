@@ -100,7 +100,6 @@ $app->get('/', function (Request $request) use ($app, $searchForm) {
 $app->get('/search', function (Request $request) use ($app, $searchForm) {
     /** @var \Doctrine\DBAL\Query\QueryBuilder $queryBuilder */
     $queryBuilder = $app['db']->createQueryBuilder();
-    $type         = $request->get('type');
     $query        = trim($request->get('q'));
 
     $data = array(

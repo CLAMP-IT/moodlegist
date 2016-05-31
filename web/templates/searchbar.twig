@@ -1,19 +1,9 @@
-{{ form_start(searchForm, {'attr': {'class': 'row collapse'}}) }}
-    <div class="medium-7 columns">
-        <div class="row collapse">
-            <div class="small-12 columns">
-                {{ form_widget(searchForm.q, {'required': false, 'attr': {'autofocus': 'true'}}) }}
-            </div>
-        </div>
+<div class="jumbotron">
+{{ form_start(searchForm, {'attr': {'class': 'form-inline'}}) }}
+    <div class="form-group">
+        {{ form_widget(searchForm.q, {'required': false, 'attr': {'autofocus': 'true', 'class': 'form-control'}}) }}
+        {{ form_widget(searchForm.moodle_version, {'attr': { 'class': 'form-control'}}) }}
     </div>
-    <div class="medium-5 columns">
-        <div class="row collapse">
-            <div class="small-6 columns">
-                {{ form_widget(searchForm.moodle_version) }}
-            </div>
-            <div class="small-6 columns">
-                {{ form_widget(searchForm.search, { 'label': 'Search »','attr': {'class': 'primary-color postfix'}}) }}
-            </div>
-        </div>
-    </div>
+    {{ form_widget(searchForm.search, { 'label': 'Search »','attr': {'class': 'btn btn-primary'}}) }}
 {{ form_end(searchForm) }}
+</div>

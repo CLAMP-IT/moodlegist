@@ -2,3 +2,4 @@
 /vendor
 /web/packages.json
 /web/p
+.DS_Store
