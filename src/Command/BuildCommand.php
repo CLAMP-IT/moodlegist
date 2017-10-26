@@ -55,7 +55,7 @@ class BuildCommand extends Command
         $uid = 1; // don't know what this does but composer requires it
 
         $corepackage = array(
-            'versions' => array('2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9', '3.0', '3.1', '3.2', '3.3')
+            'versions' => array('2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9', '3.0', '3.1', '3.2', '3.3', '3.4')
         );
         $packages[] = new \CLAMP\Moodlegist\Package\Core($corepackage);
 
