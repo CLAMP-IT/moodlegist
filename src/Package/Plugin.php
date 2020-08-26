@@ -49,7 +49,7 @@ class Plugin extends AbstractPackage
             foreach ($version['supportedmoodles'] as $supportedmoodle) {
                 $supportedmoodles[] = $supportedmoodle['release'] . '.*';
             }
-            $package['require'][Core::getPackageName()] = implode('||', $supportedmoodles);
+            //$package['require'][Core::getPackageName()] = implode('||', $supportedmoodles);
             $package['type'] = $this->getComposerType();
             $package['extra']['installer-name'] = $this->getName();
             $packages[$this->getPackageName()][$package['version']] = $package;
