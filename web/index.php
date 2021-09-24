@@ -74,6 +74,8 @@ $searchForm = $app['form.factory']->createNamedBuilder('', 'form', null, array('
     ->add('moodle_version', 'choice', array(
         'choices' => array(
             'any' => 'Any version of Moodle',
+            '3.11' => 'Moodle 3.11',
+            '3.10' => 'Moodle 3.10',
             '3.9' => 'Moodle 3.9',
             '3.8' => 'Moodle 3.8',
             '3.7' => 'Moodle 3.7',
