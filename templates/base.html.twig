@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+            <link rel="stylesheet" href="{{ app.request.basepath }}/assets/css/bootstrap.min.css">
+            <link rel="stylesheet" href="{{ app.request.basepath }}/assets/css/jumbotron-narrow.css">
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+            <script src="{{ app.request.basepath }}/assets/js/main.js"></script>
+        {% endblock %}
+    </head>
+    <body>
+        <div class="container">
+            <div class="header clearfix">
+                <nav>
+                    <ul class="nav nav-pills pull-right">
+                        <li role="presentation" class="active"><a href="{{ app.request.getSchemeAndHttpHost() }}">Home</a></li>
+                        <li role="presentation"><a href="{{ app.request.getSchemeAndHttpHost() }}#about">About</a></li>
+                        <li role="presentation"><a href="{{ app.request.getSchemeAndHttpHost() }}#contact">Contact</a></li>
+                    </ul>
+                </nav>
+                <h3 class="text-muted">Moodle Packagist</h3>
+            </div>
+            {% block body %}{% endblock %}
+            {% include 'footer.twig' %}
+      </div>
+    </body>
+</html>

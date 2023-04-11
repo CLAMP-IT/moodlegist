@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SearchController!{% endblock %}
+
+{% block body %}
+{% include 'searchbar.twig' %}
+
+{% if error %}
+    <div class="alert-box alert">{{ error }}</div>
+{% endif %}
+    <table class="table">
+        <tr>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Versions</th>
+        </tr>
+            {% for package in currentPageResults %}
+                <tr>
+                    <td data-type="{{ package.type }}">
+                        {{ package.type }}
+                    </td>
+                    <td data-name="{{ package.name | e }}">
+                        <a href="https://moodle.org/plugins/{{ package.type }}_{{ package.name }}/" target="_blank">{{ package.name | e }}</a>
+                    </td>
+                    <td class="versions">
+                        {% set versions = package.versions | format_versions( moodle_version ) %}
+                        {% for version in versions %}
+                            {# Separator allowing to toggle the show more version #}
+                            {% if (loop.index == 2 and loop.length > 4) %}
+                                <a href="#" class="js-toggle-more" title="Show all versions">...</a>
+                            {% endif %}
+                            {# Hide extra versions, keep showing only the last 3 and the dev-trunk #}
+                            {% if loop.index >= 2  and loop.index <= loop.length - 3 %}
+                                <a href="#" data-version="{{ version['version'] }}" data-hide="true" class="hide js-version">{{ version['release'] }}</a>
+                            {% else %}
+                                <a href="#" data-version="{{ version['version'] }}" class="js-version">{{ version['release'] }}</a>
+                            {% endif %}
+                        {% else %}
+                            No version available.
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" class="no-results">No results.</td>
+                </tr>
+            {% endfor %}
+    </table>
+
+    <p>
+        If a plugin has no release for a given Moodle version, please ensure that it is updated on
+        the Moodle <a href="https://moodle.org/plugins/">Plugins</a> database before reporting a
+        <a href="https://github.com/CLAMP-IT/moodlegist/issues/new">bug</a>.
+    </p>
+{% endblock %}

@@ -1,0 +1,31 @@
+<div class="col-lg-12">
+    <h4 id="about">About</h4>
+    <p>This project was forked from <a href="https://wpackagist.org/">WordPress Packagist</a>
+    and also drew inspiration from Michael Aherne's <a href="https://github.com/micaherne/moodle-plugin-repo">moodle-plugin-repo</a> project.</p>
+    <h5>Usage</h5>
+    <ol>
+        <li>Add <code>{{ app.request.getSchemeAndHttpHost() }}</code> to your project's <code>composer.json</code>.</li>
+        <li>Add desired plugins to your requirements list using <code>moodle-plugin-db</code> as the vendor name.</li>
+        <li>Optionally, add a <code>moodle/moodle</code> metapackage to enforce version requirements. This does not install core.</li>
+        <li>Run <code>composer update</code> to install or update Moodle plugins.</li>
+        <li>These packages leverage the <a href="https://github.com/composer/installers">composer/installers</a> package for installation.</li>
+    </ol>
+    <h5>Example</h5>
+    <p>The following example composer file would install <code>mod/attendance</code> and the Essential theme at the highest versions available for Moodle 3.0:</p>
+    <pre>
+    {
+        "name": "myschool/my-moodle-site",
+        "description": "My Moodle site",
+        "repositories":[
+            {
+                "type":"composer",
+                "url":"{{ app.request.getSchemeAndHttpHost() }}"
+            }
+        ],
+        "require": {
+            "moodle-plugin-db/mod_attendance":"*",
+            "moodle-plugin-db/theme_essential":"*"
+        }
+    }
+    </pre>
+</div>

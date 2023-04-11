@@ -1,23 +1,33 @@
 <?php
 
-namespace CLAMP\Moodlegist\Command;
+namespace App\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Packages;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\Helper;
-use CLAMP\Moodlegist\Package\Plugin;
-use CLAMP\Moodlegist\Package\Core;
+use Symfony\Component\Filesystem\Filesystem;
 
+#[AsCommand(
+    name: 'build',
+    description: 'Build package.json from DB',
+)]
 class BuildCommand extends Command
 {
-    protected function configure()
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this
-            ->setName('build')
-            ->setDescription('Build package.json from DB');
+        $this->entityManager = $entityManager;
+
+        parent::__construct();
     }
 
     /**
@@ -31,33 +41,22 @@ class BuildCommand extends Command
         return $package->getComposerType();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln("Building packages");
+        $io = new SymfonyStyle($input, $output);
+        $io->note("Building packages");
 
         $fs = new Filesystem();
-
-        $basePath = 'web/p.new/';
+        $basePath = 'public/p.new/';
         $fs->mkdir($basePath.'moodle');
         $fs->mkdir($basePath.'moodle-plugin-db');
 
-        /**
-         * @var \PDO $db
-         */
-        $db = $this->getApplication()->getSilexApplication()['db'];
+        // Get all the packages.
+        $em = $this->entityManager;
+        $packages = $em->getRepository(Packages::class)->findAll();
 
-        $packages = $db->query('
-            SELECT * FROM packages
-            WHERE versions IS NOT NULL
-            ORDER BY name
-        ')->fetchAll(\PDO::FETCH_CLASS, 'CLAMP\Moodlegist\Package\Plugin');
-
-        $uid = 1; // don't know what this does but composer requires it
-
-        $corepackage = array(
-            'versions' => array('2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9', '3.0', '3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.9', '3.10', '3.11')
-        );
-        $packages[] = new \CLAMP\Moodlegist\Package\Core($corepackage);
+        // Composer requires this.
+        $uid = 1;
 
         $providers = array();
 
@@ -104,17 +103,15 @@ class BuildCommand extends Command
         ));
 
         // switch old and new files
-        if ($fs->exists('web/p')) {
-            $fs->rename('web/p', 'web/p.old');
+        if ($fs->exists('public/p')) {
+            $fs->rename('public/p', 'public/p.old');
         }
-        $fs->rename($basePath, 'web/p/');
-        file_put_contents('web/packages.json', $content);
+        $fs->rename($basePath, 'public/p/');
+        file_put_contents('public/packages.json', $content);
+        $fs->remove('public/p.old');
 
-        // this doesn't work
-        // $fs->remove('web/p.old');
+        $io->success('Wrote packages.json file');
 
-        exec('rm -rf web/p.old', $return, $code);
-
-        $output->writeln("Wrote packages.json file");
+        return Command::SUCCESS;
     }
 }

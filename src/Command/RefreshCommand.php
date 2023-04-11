@@ -1,66 +1,78 @@
 <?php
 
-namespace CLAMP\Moodlegist\Command;
+namespace App\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Packages;
 
+#[AsCommand(
+    name: 'refresh',
+    description: 'Refresh list of plugins from Moodle plugins database',
+)]
 class RefreshCommand extends Command
 {
-    protected function configure()
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this
-            ->setName('refresh')
-            ->setDescription('Refresh list of plugins from Moodle plugins database');
+        $this->entityManager = $entityManager;
+
+        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        /**
-         * @var \PDO $db
-         */
-        $db = $this->getApplication()->getSilexApplication()['db'];
-
-        $updateStmt = $db->prepare('UPDATE packages SET newest_version = :newest_version, versions = :versions
-            WHERE type = :type AND name = :name');
-        $insertStmt = $db->prepare('INSERT INTO packages (type, name, newest_version, versions)
-            VALUES (:type, :name, :newest_version, :versions)');
-
+        $em = $this->entityManager;
+        $io = new SymfonyStyle($input, $output);
         $url = 'https://download.moodle.org/api/1.3/pluglist.php';
+        $io->note("Retrieving plugin list from Moodle.org");
         $json = file_get_contents($url);
-
         $plugin_list = json_decode($json);
-        $output->writeln("Updating database");
 
-        $db->beginTransaction();
+        $io->note("Updating database");
         $newCount = 0;
         $updateCount =  0;
-        foreach ($plugin_list->plugins as $plugin) {
+        $repo = $em->getRepository(Packages::class);
+        foreach($plugin_list->plugins as $plugin) {
             if (empty($plugin->component)) {
                 continue;
             }
             list($type, $name) = explode('_', $plugin->component, 2);
+            $newest_version = (int)end($plugin->versions)->version;
+            $versions = json_encode($plugin->versions);
 
-            /*if (!array_key_exists($type, $types)) {
-                continue;
-            }*/
-            $newest_version = end($plugin->versions)->version;
-            $params = array(':type' => $type, ':name' => (string) $name, ':newest_version' => (int) $newest_version,
-                ':versions' => json_encode($plugin->versions));
+            $package = new Packages();
+            $package->setType($type);
+            $package->setName($name);
+            $package->setNewestVersion($newest_version);
+            $package->setVersions($versions);
 
-            $updateStmt->execute($params);
-            if ($updateStmt->rowCount() == 0) {
-                $insertStmt->execute($params);
+            $result = $repo->findBy(['type' => $type, 'name' => $name]);
+            if (!$result) {
+                // New item.
+                $em->persist($package);
                 $newCount++;
             } else {
-                $updateCount++;
+                if($result[0]->isEqual($package)) {
+                    continue;
+                } else {
+                    $result[0]->setNewestVersion($newest_version);
+                    $result[0]->setVersions($versions);
+                    $em->persist($result[0]);
+                    $updateCount++;
+                }
             }
         }
-        $db->commit();
+        $em->flush();
+        $io->success(sprintf('Found %d new and %d updated plugins', $newCount, $updateCount));
 
-        $output->writeln("Found $newCount new and $updateCount updated plugins");
+        return Command::SUCCESS;
     }
 }
