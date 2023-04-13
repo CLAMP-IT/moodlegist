@@ -36,9 +36,9 @@ This does not provide Moodle itself. You may specify a version of moodle to lock
 1. Make sure you have PDO with sqlite support enabled.
 2. Make sure [`data`](data/) is writable. Do NOT create `data/packages.sqlite`, it will be created automatically.
 3. Run `composer install`.
-4. Point your Web server to [`web`](web/). A [`.htaccess`](web/.htaccess) is provided for Apache.
+4. Point your Web server to [`public`](public/). A [`.htaccess`](web/.htaccess) is provided for Apache.
 
 ### Updating the database
 
-1. `bin/cmd refresh`: Refresh the list of plugins from the Moodle plugins repository.
-2. `bin/cmd build`: Rebuild all `.json` files in `web/`.
+1. `php bin/console refresh`: Refresh the list of plugins from the Moodle plugins repository.
+2. `php bin/console`: Rebuild all `.json` files in `public/`.
