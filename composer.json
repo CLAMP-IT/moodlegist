@@ -1,5 +1,6 @@
 {
     "type": "project",
+    "name": "clamp-it/moodlegist",
     "license": "proprietary",
     "minimum-stability": "stable",
     "prefer-stable": true,
