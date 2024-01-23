@@ -119,7 +119,7 @@ class Packages
                 'url' => $version['downloadurl']
             );
             $package['homepage'] = $this->getHomepageUrl();
-            $package['require']['composer/installers'] = '~1.0';
+            $package['require']['composer/installers'] = '^1.0 || ^2.0';
             $supportedmoodles = array();
             foreach ($version['supportedmoodles'] as $supportedmoodle) {
                 $supportedmoodles[] = $supportedmoodle['release'] . '.*';
