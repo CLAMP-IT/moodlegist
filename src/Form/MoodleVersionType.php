@@ -18,6 +18,7 @@ class MoodleVersionType extends AbstractType
             ->add('moodle_version', ChoiceType::class, array(
                 'choices' => array(
                     'Any version of Moodle' => 'any',
+                    'Moodle 4.4' => '4.4',
                     'Moodle 4.3' => '4.3',
                     'Moodle 4.2' => '4.2',
                     'Moodle 4.1' => '4.1',
