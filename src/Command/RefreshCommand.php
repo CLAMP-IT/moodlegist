@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -19,10 +20,12 @@ use App\Entity\Packages;
 class RefreshCommand extends Command
 {
     private $entityManager;
+    private HttpClientInterface $httpClient;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, HttpClientInterface $httpClient)
     {
         $this->entityManager = $entityManager;
+        $this->httpClient = $httpClient;
 
         parent::__construct();
     }
@@ -33,7 +36,12 @@ class RefreshCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $url = 'https://download.moodle.org/api/1.3/pluglist.php';
         $io->note("Retrieving plugin list from Moodle.org");
-        $json = file_get_contents($url);
+
+        $response = $this->httpClient->request(
+                'GET',
+                $url
+        );
+        $json = $response->getContent();
         $plugin_list = json_decode($json);
 
         $io->note("Updating database");
