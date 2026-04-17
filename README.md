@@ -41,4 +41,4 @@ This does not provide Moodle itself. You may specify a version of moodle to lock
 ### Updating the database
 
 1. `php bin/console refresh`: Refresh the list of plugins from the Moodle plugins repository.
-2. `php bin/console`: Rebuild all `.json` files in `public/`.
+2. `php bin/console build`: Rebuild all `.json` files in `public/`.
