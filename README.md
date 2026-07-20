@@ -3,6 +3,8 @@ Moodle Packagist
 
 This is an experimental repository which allows Moodle plugins to be managed using [Composer](https://getcomposer.org). It is forked from the [wpackagist.org](https://wpackagist.org) project and builds on the work done by [Michael Aherne](https://github.com/micaherne/moodle-plugin-repo).
 
+With the 20 July 2026 launch of the [Moodle Marketplace](https://moodle.com/news/moodle-marketplace-is-here/), this project is suspended pending API support.
+
 ## Usage
 
 Example composer.json:
