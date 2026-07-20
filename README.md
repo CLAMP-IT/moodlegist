@@ -34,9 +34,10 @@ This does not provide Moodle itself. You may specify a version of moodle to lock
 ### Installing
 
 1. Make sure you have PDO with sqlite support enabled.
-2. Make sure [`data`](data/) is writable. Do NOT create `data/packages.sqlite`, it will be created automatically.
+2. Make sure [`data`](data/) is writable.
 3. Run `composer install`.
-4. Point your Web server to [`public`](public/). A [`.htaccess`](web/.htaccess) is provided for Apache.
+4. Run `php bin/console doctrine:migrations:migrate` to bootstrap the database at `data/packages.sqlite`.
+5. Point your Web server to [`public`](public/). A [`.htaccess`](web/.htaccess) is provided for Apache.
 
 ### Updating the database
 
